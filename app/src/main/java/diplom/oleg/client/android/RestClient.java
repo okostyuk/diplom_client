@@ -15,7 +15,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RestClient {
     static String basicAuth;
-    static RestService restService;
+    static RestService restService = new Retrofit.Builder()
+            .baseUrl("http://192.168.1.101:8080")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build().create(RestService.class);
 
 
 
@@ -24,17 +27,17 @@ public class RestClient {
                 .baseUrl("http://192.168.1.101:8080")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-        String credentials = email + ":" + password;
-        basicAuth ="Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-
         restService = retrofit.create(RestService.class);
     }
 
-    public static User login() throws IOException {
-        Response<User> response = restService.loadUserInfo(basicAuth).execute();
+    public static User login(String email, String password) throws IOException {
+        Response<User> response = restService.signin(email, password).execute();
         if (!response.isSuccessful()){
             throw new IOException(response.errorBody().string());
         }
+
+        String credentials = email + ":" + password;
+        basicAuth ="Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
 
         return response.body();
     }

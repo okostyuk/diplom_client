@@ -12,6 +12,7 @@ import android.os.AsyncTask;
 
 import android.os.Bundle;
 
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -22,6 +23,12 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.IOException;
 
@@ -215,8 +222,8 @@ public class LoginActivity extends Activity {
         @Override
         protected User doInBackground(Void... params) {
             try {
-                RestClient.init(mEmail, mPassword);
-                User user = RestClient.login();
+                //RestClient.init(mEmail, mPassword);
+                User user = RestClient.login(mEmail, mPassword);
                 SharedPreferences prefs = getSharedPreferences("com.oleg.diplom", MODE_PRIVATE);
                 prefs.edit().putString("email", mEmail).apply();
                 prefs.edit().putString("password", mPassword).apply();
