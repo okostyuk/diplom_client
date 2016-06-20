@@ -40,11 +40,10 @@ import diplom.oleg.client.android.model.User;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends Activity {
+public class LoginActivity extends BaseActivity {
 
     private static final String TAG = "LoginActivity";
     private UserLoginTask mAuthTask = null;
-    private RestClient restClient;
 
     // UI references.
     private AutoCompleteTextView mEmailView;
@@ -58,11 +57,8 @@ public class LoginActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        super.onCreate(savedInstanceState, R.layout.activity_login);
 
-        //Firebase.setAndroidContext(this);
-        //myFirebaseRef = new Firebase("https://dazzling-torch-5301.firebaseio.com/");
 
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
@@ -229,7 +225,7 @@ public class LoginActivity extends Activity {
         protected User doInBackground(Void... params) {
             try {
                 //RestClient.init(mEmail, mPassword);
-                User user = restClient.login(mEmail, mPassword);
+                user = restClient.login(mEmail, mPassword);
                 SharedPreferences prefs = getSharedPreferences(getPackageName(), MODE_PRIVATE);
                 prefs.edit().putString("userId", user.getId()).apply();
                 prefs.edit().putString("email", mEmail).apply();

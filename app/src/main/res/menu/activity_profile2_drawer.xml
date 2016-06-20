@@ -20,6 +20,10 @@
             android:title="Tools" />-->
     </group>
 
+    <item
+        android:id="@+id/logout"
+        android:icon="@drawable/logout_white"
+        android:title="Logout" />
 <!--
     <item android:title="Communicate">
         <menu>

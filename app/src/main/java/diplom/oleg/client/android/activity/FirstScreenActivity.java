@@ -1,61 +1,33 @@
 package diplom.oleg.client.android.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.storage.FirebaseStorage;
-import com.nostra13.universalimageloader.cache.disc.DiskCache;
-import com.nostra13.universalimageloader.cache.disc.impl.LimitedAgeDiskCache;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
-import diplom.oleg.client.android.FirebaseImageDownloader;
-import diplom.oleg.client.android.FirebaseService;
+import java.util.List;
+
 import diplom.oleg.client.android.R;
-import diplom.oleg.client.android.RestClient;
+import diplom.oleg.client.android.model.Task;
 
-public class FirstScreenActivity extends AppCompatActivity {
+public class FirstScreenActivity extends DrawerActivity {
 
 
     private static final String TAG = "FirstScreenActivity";
     ImageView avatar;
-    RestClient restClient;
-    String userId;
 
 
-    //private FirebaseService firebaseService;
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        //mAuth.addAuthStateListener(firebaseService);
-        //mAuth.signInAnonymously().addOnCompleteListener(firebaseService);
-    }
-
+    @SuppressLint("MissingSuperCall")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        super.onCreate(savedInstanceState, R.layout.activity_main);
 
-        FirebaseService firebaseService = new FirebaseService(this);
-        restClient = new RestClient(getSharedPreferences(getPackageName(), MODE_PRIVATE).getString("serverIP", ""));
-        userId = getSharedPreferences(getPackageName(), MODE_PRIVATE).getString("userId", "");
-
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
-                .imageDownloader(firebaseService)
-                .writeDebugLogs()
-                .build();
-        ImageLoader.getInstance().init(config);
 
         findViewById(R.id.editProfile).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,12 +43,31 @@ public class FirstScreenActivity extends AppCompatActivity {
             }
         });
 
+        ((TextView)findViewById(R.id.fName)).setText(user.getFirstName());
+        ((TextView)findViewById(R.id.lName)).setText(user.getLastName());
         avatar = (ImageView) findViewById(R.id.avatar);
-        //ImageLoader.getInstance().displayImage("avatar1.png", avatar);
-        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        //setSupportActionBar(toolbar);
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        updateUI();
+        ImageLoader.getInstance().displayImage(user.getAvatar(), avatar);
+        new LoadTasks().execute();
+
+    }
+
+    class LoadTasks extends AsyncTask<Void, Void, List<Task>>{
+        Exception exception;
+
+        @Override
+        protected List<Task> doInBackground(Void... params) {
+            try {
+                List<Task> tasks = restClient.getAllTasks();
+                tasks.size();
+            }catch (Exception ex){
+                exception = ex;
+            }
+            return null;
+        }
+
+
     }
 
 }

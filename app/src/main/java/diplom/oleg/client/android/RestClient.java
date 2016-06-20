@@ -4,8 +4,10 @@ import android.util.Base64;
 import android.util.Log;
 
 import java.io.IOException;
+import java.util.List;
 
 import diplom.oleg.client.android.model.Task;
+import diplom.oleg.client.android.model.TasksResponse;
 import diplom.oleg.client.android.model.User;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -54,7 +56,18 @@ public class RestClient {
         throw new IOException(response.errorBody().string());
     }
 
-    public void createTask(Task task) throws IOException {
-        restService.createTask(JSON_CONTENT_TYPE, basicAuth, task).execute();
+    public void createTask(String taskId, Task task) throws IOException {
+        restService.createTask(JSON_CONTENT_TYPE, basicAuth, taskId, task).execute();
+    }
+
+    public List<Task> getAllTasks() throws IOException {
+        Response<TasksResponse> response = restService.getTasks(basicAuth).execute();
+        if (response.isSuccessful())
+            return response.body().getData().getTasks();
+        throw new IOException(response.errorBody().string());
+    }
+
+    public void logout() {
+        basicAuth = null;
     }
 }

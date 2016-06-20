@@ -64,7 +64,7 @@ public class CreateTaskActivity extends Activity {
         @Override
         protected Void doInBackground(Void... params) {
             try {
-                restClient.createTask(new Task(title, desc, userId));
+                restClient.createTask("99", new Task(title, desc, userId));
             }catch (Exception ex){
                 exception = ex;
             }

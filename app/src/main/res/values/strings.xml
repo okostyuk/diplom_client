@@ -29,4 +29,5 @@
     <string name="Title">Title</string>
     <string name="Desc">Description</string>
     <string name="create_task">Create task</string>
+    <string name="loading">Loading</string>
 </resources>
