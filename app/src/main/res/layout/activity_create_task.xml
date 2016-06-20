@@ -51,7 +51,7 @@
                     android:layout_height="150dp"
                     android:inputType="textMultiLine"
                     android:ems="10"
-                    android:id="@+id/desc"
+                    android:id="@+id/description"
                     android:hint="@string/Desc" />
                 <include layout="@layout/card_technologies"/>
             </LinearLayout>

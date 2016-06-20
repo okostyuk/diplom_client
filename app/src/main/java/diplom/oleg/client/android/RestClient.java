@@ -17,6 +17,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RestClient {
     private static final String TAG = "RestClient";
+    private static final String JSON_CONTENT_TYPE = "application/json";
     static String basicAuth;
     private final RestService restService;
 
@@ -53,6 +54,7 @@ public class RestClient {
         throw new IOException(response.errorBody().string());
     }
 
-    public void createTask(Task task) {
+    public void createTask(Task task) throws IOException {
+        restService.createTask(JSON_CONTENT_TYPE, basicAuth, task).execute();
     }
 }

@@ -31,7 +31,7 @@ public class CreateTaskActivity extends Activity {
 
         title = (EditText) findViewById(R.id.title);
         description = (EditText) findViewById(R.id.description);
-        findViewById(R.id.save).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.create).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new CreateTask(
@@ -44,6 +44,7 @@ public class CreateTaskActivity extends Activity {
     }
 
     private class CreateTask extends AsyncTask<Void, Void, Void> {
+        Exception exception;
 
         private final String title;
         private final String desc;
@@ -56,10 +57,26 @@ public class CreateTaskActivity extends Activity {
         }
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected void onPreExecute() {
+            toolbar.setTitle("Creating");
+        }
 
-            restClient.createTask(new Task(title, desc, userId));
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                restClient.createTask(new Task(title, desc, userId));
+            }catch (Exception ex){
+                exception = ex;
+            }
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            if (exception == null)
+                toolbar.setTitle("Created");
+            else
+                toolbar.setTitle("Error");
         }
     }
 }

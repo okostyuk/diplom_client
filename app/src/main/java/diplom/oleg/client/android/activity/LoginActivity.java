@@ -104,6 +104,9 @@ public class LoginActivity extends Activity {
         if (prefs.contains("serverIP")){
             mServerIPView.setText(prefs.getString("serverIP", ""));
             restClient = new RestClient(prefs.getString("serverIP", ""));
+        }else{
+            mServerIPView.setText(prefs.getString("192.168.1.101", ""));
+            restClient = new RestClient("192.168.1.101");
         }
 
         Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
@@ -163,7 +166,7 @@ public class LoginActivity extends Activity {
             // perform the user login attempt.
             showProgress(true);
             restClient = new RestClient(ip);
-            mAuthTask = new UserLoginTask(ip, email, password);
+            mAuthTask = new UserLoginTask(email, password, ip);
             mAuthTask.execute();
         }
     }
@@ -227,7 +230,7 @@ public class LoginActivity extends Activity {
             try {
                 //RestClient.init(mEmail, mPassword);
                 User user = restClient.login(mEmail, mPassword);
-                SharedPreferences prefs = getSharedPreferences("com.oleg.diplom", MODE_PRIVATE);
+                SharedPreferences prefs = getSharedPreferences(getPackageName(), MODE_PRIVATE);
                 prefs.edit().putString("userId", user.getId()).apply();
                 prefs.edit().putString("email", mEmail).apply();
                 prefs.edit().putString("password", mPassword).apply();

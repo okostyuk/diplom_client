@@ -7,6 +7,7 @@ import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
+import retrofit2.http.Headers;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
@@ -32,8 +33,8 @@ public interface RestService {
     @GET("/users/{userId}")
     Call<User> getUser(@Header(value = "Authentication") String basicAuth, @Path("userId") String id);
 
-    @POST("/task")
-    Call<Void> createTask(@Header(value = "Authentication") String basicAuth, @Body Task task);
+    @PUT("/tasks")
+    Call<Void> createTask(@Header("Content-Type") String content_type, @Header(value = "Authentication") String basicAuth, @Body Task task);
 
 
 }

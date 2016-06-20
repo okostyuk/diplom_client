@@ -119,7 +119,7 @@ public class ProfileActivity extends AppCompatActivity
             Exception ex;
             @Override
             protected User doInBackground(Void... params) {
-                SharedPreferences prefs = getSharedPreferences("com.oleg.diplom", MODE_PRIVATE);
+                SharedPreferences prefs = getSharedPreferences(getPackageName(), MODE_PRIVATE);
                 userId = prefs.getString("userId", "");
                 try {
                     return restClient.getUser(userId);
