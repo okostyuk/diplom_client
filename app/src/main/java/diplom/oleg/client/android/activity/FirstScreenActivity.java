@@ -22,12 +22,15 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import diplom.oleg.client.android.FirebaseImageDownloader;
 import diplom.oleg.client.android.FirebaseService;
 import diplom.oleg.client.android.R;
+import diplom.oleg.client.android.RestClient;
 
 public class FirstScreenActivity extends AppCompatActivity {
 
 
     private static final String TAG = "FirstScreenActivity";
     ImageView avatar;
+    RestClient restClient;
+    String userId;
 
 
     //private FirebaseService firebaseService;
@@ -45,7 +48,8 @@ public class FirstScreenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         FirebaseService firebaseService = new FirebaseService(this);
-
+        restClient = new RestClient(getSharedPreferences(getPackageName(), MODE_PRIVATE).getString("serverIP", ""));
+        userId = getSharedPreferences(getPackageName(), MODE_PRIVATE).getString("userId", "");
 
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
                 .imageDownloader(firebaseService)
@@ -68,7 +72,7 @@ public class FirstScreenActivity extends AppCompatActivity {
         });
 
         avatar = (ImageView) findViewById(R.id.avatar);
-        ImageLoader.getInstance().displayImage("avatar1.png", avatar);
+        //ImageLoader.getInstance().displayImage("avatar1.png", avatar);
         //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
 

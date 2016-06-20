@@ -44,6 +44,7 @@ public class LoginActivity extends Activity {
 
     private static final String TAG = "LoginActivity";
     private UserLoginTask mAuthTask = null;
+    private RestClient restClient;
 
     // UI references.
     private AutoCompleteTextView mEmailView;
@@ -93,7 +94,7 @@ public class LoginActivity extends Activity {
             }
         });
 
-        SharedPreferences prefs = getSharedPreferences("com.oleg.diplom", MODE_PRIVATE);
+        SharedPreferences prefs = getSharedPreferences(getPackageName(), MODE_PRIVATE);
         if (prefs.contains("email")){
             mEmailView.setText(prefs.getString("email", ""));
         }
@@ -102,6 +103,7 @@ public class LoginActivity extends Activity {
         }
         if (prefs.contains("serverIP")){
             mServerIPView.setText(prefs.getString("serverIP", ""));
+            restClient = new RestClient(prefs.getString("serverIP", ""));
         }
 
         Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
@@ -160,7 +162,8 @@ public class LoginActivity extends Activity {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password, ip);
+            restClient = new RestClient(ip);
+            mAuthTask = new UserLoginTask(ip, email, password);
             mAuthTask.execute();
         }
     }
@@ -213,18 +216,19 @@ public class LoginActivity extends Activity {
         private final String mPassword;
         private final String mIP;
 
-        UserLoginTask(String email, String password, String IP) {
+        UserLoginTask(String email, String password, String ip) {
             mEmail = email;
             mPassword = password;
-            mIP = IP;
+            mIP = ip;
         }
 
         @Override
         protected User doInBackground(Void... params) {
             try {
                 //RestClient.init(mEmail, mPassword);
-                User user = RestClient.login(mEmail, mPassword);
+                User user = restClient.login(mEmail, mPassword);
                 SharedPreferences prefs = getSharedPreferences("com.oleg.diplom", MODE_PRIVATE);
+                prefs.edit().putString("userId", user.getId()).apply();
                 prefs.edit().putString("email", mEmail).apply();
                 prefs.edit().putString("password", mPassword).apply();
                 prefs.edit().putString("serverIP", mIP).apply();

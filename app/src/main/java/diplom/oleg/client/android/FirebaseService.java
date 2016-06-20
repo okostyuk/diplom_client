@@ -85,7 +85,7 @@ public class FirebaseService extends BaseImageDownloader implements FirebaseAuth
         Log.d(TAG, "onComplete<AuthResult>: " + (user != null));
     }
 
-    public void uploadFile(String pathToFile, String name){
-
+    public void uploadFile(byte[] bytes, String name){
+        storage.getReference(name).putBytes(bytes);
     }
 }

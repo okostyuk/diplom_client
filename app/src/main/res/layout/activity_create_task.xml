@@ -46,8 +46,9 @@
                     android:hint="@string/Title" />
 
                 <EditText
+                    android:gravity="bottom"
                     android:layout_width="match_parent"
-                    android:layout_height="144dp"
+                    android:layout_height="150dp"
                     android:inputType="textMultiLine"
                     android:ems="10"
                     android:id="@+id/desc"
