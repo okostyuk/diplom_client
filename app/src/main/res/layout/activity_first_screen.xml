@@ -20,7 +20,7 @@
             android:layout_marginTop="10dp"
             android:id="@+id/currentProjectCard"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="wrap_content"
             app:cardCornerRadius="4dp"
             android:layout_margin="25dp"
             android:layout_centerVertical="true"
@@ -31,34 +31,89 @@
                 android:layout_height="wrap_content"
                 android:padding="10dp">
                 <TextView
-                    android:background="@color/secondary"
-                    android:text="Current project"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:text="@string/my_tasks"
                     android:id="@+id/info_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
-                <include layout="@layout/task_list" />
+
+
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/not_completed"
+                        android:id="@+id/textView"
+                        android:layout_weight="1" />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="View"
+                        android:id="@+id/buttonMyNotCompletedTasks"
+                         />
+
+                </LinearLayout>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/all"
+                        android:layout_weight="1" />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="View"
+                        android:id="@+id/buttonAllMyTasks" />
+                </LinearLayout>
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/create_new_task"
+                    android:id="@+id/button2" />
             </LinearLayout>
-
-
 
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
             android:id="@+id/projects"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="wrap_content"
             app:cardCornerRadius="4dp"
-            android:layout_marginLeft="25dp"
-            android:layout_marginRight="25dp"
+            android:layout_margin="25dp"
             android:layout_below="@+id/currentProjectCard"
             android:layout_alignParentStart="true">
-            <TextView
-                android:layout_margin="25dp"
-                android:text="projects list"
-                android:id="@+id/projects_list"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <include layout="@layout/task_list" />
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp">
+                <TextView
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:text="@string/all_tasks"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/buttonAllTasks"
+                    android:layout_gravity="right"
+                    android:text="@string/view" />
+            </LinearLayout>
+
 
         </android.support.v7.widget.CardView>
 

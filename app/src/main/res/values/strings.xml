@@ -30,4 +30,10 @@
     <string name="Desc">Description</string>
     <string name="create_task">Create task</string>
     <string name="loading">Loading</string>
+    <string name="my_tasks">My tasks</string>
+    <string name="not_completed">Not completed</string>
+    <string name="all">All my tasks</string>
+    <string name="create_new_task">Create new task</string>
+    <string name="all_tasks">All tasks</string>
+    <string name="view">View</string>
 </resources>

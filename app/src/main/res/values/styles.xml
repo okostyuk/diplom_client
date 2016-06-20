@@ -40,7 +40,7 @@
         <item name="android:colorBackgroundFloating">@color/primary_darker</item>
 
         <item name="colorButtonNormal">@color/primary_darker</item>
-        <item name="android:colorButtonNormal">@color/primary_darker</item>
+        <item name="android:colorButtonNormal">@color/secondary</item>
     </style>
 
     <style name="AppTheme.Dark.Dialog" parent="Theme.AppCompat.Dialog">

@@ -23,6 +23,7 @@ public class FirstScreenActivity extends DrawerActivity {
     ImageView avatar;
 
 
+
     @SuppressLint("MissingSuperCall")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +47,13 @@ public class FirstScreenActivity extends DrawerActivity {
         ((TextView)findViewById(R.id.fName)).setText(user.getFirstName());
         ((TextView)findViewById(R.id.lName)).setText(user.getLastName());
         avatar = (ImageView) findViewById(R.id.avatar);
+
+        findViewById(R.id.buttonAllTasks).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(FirstScreenActivity.this, TaskListActivity.class));
+            }
+        });
 
         updateUI();
         ImageLoader.getInstance().displayImage(user.getAvatar(), avatar);
