@@ -88,4 +88,8 @@ public class FirebaseService extends BaseImageDownloader implements FirebaseAuth
         mAuth.signOut();
         user = null;
     }
+
+    public void deleteFile(String filename) {
+        mStorage.getReference(filename).delete();
+    }
 }

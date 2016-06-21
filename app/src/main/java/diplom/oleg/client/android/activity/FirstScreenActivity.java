@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.NavigationView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -21,13 +20,20 @@ public class FirstScreenActivity extends DrawerActivity {
 
     private static final String TAG = "FirstScreenActivity";
     ImageView avatar;
-
+    TextView firstName;
+    TextView lastName;
 
 
     @SuppressLint("MissingSuperCall")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState, R.layout.activity_main);
+        super.onCreate(savedInstanceState, R.layout.activity_main_drawer);
+        avatar = (ImageView) findViewById(R.id.avatar);
+        firstName  = ((TextView)findViewById(R.id.fName));
+        lastName = ((TextView)findViewById(R.id.lName));
+
+        if (user.getFirstName() == null || user.getFirstName().isEmpty())
+            startActivity(new Intent(this, ProfileActivity.class));
 
 
         findViewById(R.id.editProfile).setOnClickListener(new View.OnClickListener() {
@@ -37,16 +43,6 @@ public class FirstScreenActivity extends DrawerActivity {
             }
         });
 
-        findViewById(R.id.projects).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(FirstScreenActivity.this, TaskListActivity.class));
-            }
-        });
-
-        ((TextView)findViewById(R.id.fName)).setText(user.getFirstName());
-        ((TextView)findViewById(R.id.lName)).setText(user.getLastName());
-        avatar = (ImageView) findViewById(R.id.avatar);
 
         findViewById(R.id.buttonAllTasks).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,10 +51,25 @@ public class FirstScreenActivity extends DrawerActivity {
             }
         });
 
-        updateUI();
-        ImageLoader.getInstance().displayImage(user.getAvatar(), avatar);
-        new LoadTasks().execute();
+        //new LoadTasks().execute();
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateUI();
+    }
+
+    protected void updateUI(){
+        super.updateUI();
+        firstName.setText((user.getFirstName()));
+        lastName.setText(user.getLastName());
+
+        if (user.getAvatar() == null){
+            avatar.setImageResource(R.drawable.avatar_empty);
+        }else{
+            ImageLoader.getInstance().displayImage(user.getAvatar(), avatar);
+        }
     }
 
     class LoadTasks extends AsyncTask<Void, Void, List<Task>>{

@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -20,6 +21,8 @@ import diplom.oleg.client.android.FirebaseService;
 import diplom.oleg.client.android.R;
 import diplom.oleg.client.android.RestClient;
 import diplom.oleg.client.android.model.User;
+
+import static android.support.v4.app.NavUtils.navigateUpFromSameTask;
 
 /**
  * Created by alena on 20.06.16.
@@ -53,10 +56,19 @@ public class DrawerActivity extends BaseActivity implements NavigationView.OnNav
 
     private void initToolbar(DrawerLayout drawer, Toolbar toolbar, NavigationView navigationView) {
         setSupportActionBar(toolbar);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayShowHomeEnabled(true);
+        }else{
+            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                    this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+            toggle.setDrawerIndicatorEnabled(true);
+            drawer.addDrawerListener(toggle);
+            toggle.syncState();
+        }
+
     }
 
     protected void updateUI(){
@@ -98,5 +110,22 @@ public class DrawerActivity extends BaseActivity implements NavigationView.OnNav
             drawer.closeDrawer(GravityCompat.START);
         return true;
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            // This ID represents the Home or Up button. In the case of this
+            // activity, the Up button is shown. Use NavUtils to allow users
+            // to navigate up one level in the application structure. For
+            // more details, see the Navigation pattern on Android Design:
+            //
+            // http://developer.android.com/design/patterns/navigation.html#up-vs-back
+            //
+            navigateUpFromSameTask(this);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
