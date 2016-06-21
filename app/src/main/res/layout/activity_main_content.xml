@@ -133,6 +133,7 @@
             android:background="@color/primary"
             app:layout_widthPercent="100%"
             app:layout_aspectRatio="178%"
+            android:elevation="2dp"
             android:id="@+id/imageView" >
 
             <LinearLayout
