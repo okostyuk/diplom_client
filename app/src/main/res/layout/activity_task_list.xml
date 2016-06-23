@@ -37,7 +37,21 @@
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <include layout="@layout/task_list" />
+            <android.support.v4.widget.SwipeRefreshLayout
+                android:id="@+id/swipeRefreshLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/task_list"
+                    android:name="diplom.oleg.client.android.activity.TaskListFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    app:layoutManager="LinearLayoutManager"
+                    tools:context="diplom.oleg.client.android.activity.TaskListActivity"
+                    tools:listitem="@layout/task_list_content" />
+            </android.support.v4.widget.SwipeRefreshLayout>
         </FrameLayout>
 
         <android.support.design.widget.FloatingActionButton
@@ -59,6 +73,6 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header_profile"
-        app:menu="@menu/activity_profile2_drawer" />
+        app:menu="@menu/drawer_menu" />
 
 </android.support.v4.widget.DrawerLayout>

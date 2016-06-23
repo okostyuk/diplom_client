@@ -36,4 +36,13 @@
     <string name="create_new_task">Create new task</string>
     <string name="all_tasks">All tasks</string>
     <string name="view">View</string>
+    <string name="profile">Profile</string>
+    <string name="first_name">First name</string>
+    <string name="last_name">Last name</string>
+    <string name="email_address">Email address</string>
+    <string name="title_activity_test">TestActivity</string>
+    <string name="accept">Accept</string>
+    <string name="Save">Save</string>
+    <string name="Performers" >Performers</string>
+    <string name="choose">Choose</string>
 </resources>

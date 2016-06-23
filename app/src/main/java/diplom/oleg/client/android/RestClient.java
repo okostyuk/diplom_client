@@ -6,9 +6,12 @@ import android.util.Log;
 import java.io.IOException;
 import java.util.List;
 
+import diplom.oleg.client.android.model.Accept;
+import diplom.oleg.client.android.model.AcceptsResponse;
 import diplom.oleg.client.android.model.Task;
 import diplom.oleg.client.android.model.TasksResponse;
 import diplom.oleg.client.android.model.User;
+import diplom.oleg.client.android.model.UsersResponse;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -43,10 +46,11 @@ public class RestClient {
         return response.body();
     }
 
-    public void updateUser(String userId, User user) throws IOException {
-        Response<Void> res = restService.updateUser(basicAuth, userId, user).execute();
-        if (!res.isSuccessful())
-            throw new IOException(res.errorBody().string());
+    public User updateUser(String userId, User user) throws IOException {
+        Response<User> res = restService.updateUser(basicAuth, userId, user).execute();
+        if (res.isSuccessful())
+            return  res.body();
+        throw new IOException(res.errorBody().string());
     }
 
     public User getUser(String userId) throws IOException {
@@ -56,8 +60,11 @@ public class RestClient {
         throw new IOException(response.errorBody().string());
     }
 
-    public void createTask(String taskId, Task task) throws IOException {
-        restService.createTask(JSON_CONTENT_TYPE, basicAuth, taskId, task).execute();
+    public Task createTask(Task task) throws IOException {
+        Response<Task> response = restService.createTask(JSON_CONTENT_TYPE, basicAuth, task).execute();
+        if (response.isSuccessful())
+            return response.body();
+        throw new IOException(response.errorBody().string());
     }
 
     public List<Task> getAllTasks() throws IOException {
@@ -69,5 +76,33 @@ public class RestClient {
 
     public void logout() {
         basicAuth = null;
+    }
+
+    public Task getTask(String taskId) throws IOException {
+        Response<Task> response = restService.getTask(basicAuth, taskId).execute();
+        if (response.isSuccessful())
+            return response.body();
+        throw new IOException(response.errorBody().string());
+    }
+
+    public Accept createAccept(Accept accept) throws IOException {
+        Response<Accept> response = restService.createAccept(JSON_CONTENT_TYPE, basicAuth, accept).execute();
+        if (response.isSuccessful())
+            return response.body();
+        throw new IOException(response.errorBody().string());
+    }
+
+    public List<Accept> getAccepts(String taskId) throws IOException {
+        Response<AcceptsResponse> response = restService.findAcceptsByTask(basicAuth, taskId).execute();
+        if (response.isSuccessful())
+            return response.body().getData().getAccepts();
+        throw new IOException(response.errorBody().string());
+    }
+
+    public List<User> getUsers() throws IOException {
+        Response<UsersResponse> response = restService.getUsers(basicAuth).execute();
+        if (response.isSuccessful())
+            return response.body().getData().getUsers();
+        throw new IOException(response.errorBody().string());
     }
 }

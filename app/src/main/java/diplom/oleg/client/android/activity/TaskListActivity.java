@@ -2,28 +2,21 @@ package diplom.oleg.client.android.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import android.support.v7.app.ActionBar;
-import android.view.MenuItem;
-
 import diplom.oleg.client.android.R;
 
-import diplom.oleg.client.android.activity.dummy.DummyContent;
+import diplom.oleg.client.android.model.Task;
 
 import java.util.List;
-
-import static android.support.v4.app.NavUtils.navigateUpFromSameTask;
 
 /**
  * An activity representing a list of Tasks. This activity
@@ -33,76 +26,71 @@ import static android.support.v4.app.NavUtils.navigateUpFromSameTask;
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
-public class TaskListActivity extends DrawerActivity {
-
-    /**
-     * Whether or not the activity is in two-pane mode, i.e. running on a tablet
-     * device.
-     */
-    private boolean mTwoPane;
+public class TaskListActivity extends DrawerActivity implements SwipeRefreshLayout.OnRefreshListener {
+    private RecyclerView recyclerView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private static final int CREATE_TASK_REQUEST = 101;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_task_list);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        super.onCreate(savedInstanceState, R.layout.activity_task_list);
         toolbar.setTitle(getTitle());
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(TaskListActivity.this, CreateTaskActivity.class));
+                startActivityForResult(new Intent(TaskListActivity.this, CreateTaskActivity.class), CREATE_TASK_REQUEST);
             }
         });
-        // Show the Up button in the action bar.
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
 
-        View recyclerView = findViewById(R.id.task_list);
+        recyclerView = (RecyclerView) findViewById(R.id.task_list);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         assert recyclerView != null;
-        setupRecyclerView((RecyclerView) recyclerView);
-
-        if (findViewById(R.id.task_detail_container) != null) {
-            // The detail container view will be present only in the
-            // large-screen layouts (res/values-w900dp).
-            // If this view is present, then the
-            // activity should be in two-pane mode.
-            mTwoPane = true;
-        }
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+        new LoadTasks().execute();
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == android.R.id.home) {
-            // This ID represents the Home or Up button. In the case of this
-            // activity, the Up button is shown. Use NavUtils to allow users
-            // to navigate up one level in the application structure. For
-            // more details, see the Navigation pattern on Android Design:
-            //
-            // http://developer.android.com/design/patterns/navigation.html#up-vs-back
-            //
-            navigateUpFromSameTask(this);
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+    public void onRefresh() {
+        new LoadTasks().execute();
     }
 
-    private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(DummyContent.ITEMS));
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CREATE_TASK_REQUEST && resultCode == RESULT_OK){
+            new LoadTasks().execute();
+        }
+    }
+
+    class LoadTasks extends AsyncTask<Void, Void, List<Task>> {
+        Exception exception;
+
+        @Override
+        protected List<Task> doInBackground(Void... params) {
+            try {
+                List<Task> tasks = restClient.getAllTasks();
+                return tasks;
+            }catch (Exception ex){
+                exception = ex;
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(List<Task> tasks) {
+            mSwipeRefreshLayout.setRefreshing(false);
+            recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(tasks));
+        }
     }
 
     public class SimpleItemRecyclerViewAdapter
             extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
-        private final List<DummyContent.DummyItem> mValues;
+        private final List<Task> mValues;
 
-        public SimpleItemRecyclerViewAdapter(List<DummyContent.DummyItem> items) {
+        public SimpleItemRecyclerViewAdapter(List<Task> items) {
             mValues = items;
         }
 
@@ -116,27 +104,16 @@ public class TaskListActivity extends DrawerActivity {
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mItem = mValues.get(position);
-            holder.mIdView.setText(mValues.get(position).id);
-            holder.mContentView.setText(mValues.get(position).content);
+            holder.mIdView.setText(mValues.get(position).getId());
+            holder.mContentView.setText(mValues.get(position).getTitle());
 
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (mTwoPane) {
-                        Bundle arguments = new Bundle();
-                        arguments.putString(TaskDetailFragment.ARG_ITEM_ID, holder.mItem.id);
-                        TaskDetailFragment fragment = new TaskDetailFragment();
-                        fragment.setArguments(arguments);
-                        getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.task_detail_container, fragment)
-                                .commit();
-                    } else {
-                        Context context = v.getContext();
-                        Intent intent = new Intent(context, TaskDetailActivity.class);
-                        intent.putExtra(TaskDetailFragment.ARG_ITEM_ID, holder.mItem.id);
-
-                        context.startActivity(intent);
-                    }
+                    Context context = v.getContext();
+                    Intent intent = new Intent(context, TaskDetailActivity.class);
+                    intent.putExtra(TaskDetailFragment.ARG_ITEM_ID, holder.mItem.getId());
+                    context.startActivity(intent);
                 }
             });
         }
@@ -150,7 +127,7 @@ public class TaskListActivity extends DrawerActivity {
             public final View mView;
             public final TextView mIdView;
             public final TextView mContentView;
-            public DummyContent.DummyItem mItem;
+            public Task mItem;
 
             public ViewHolder(View view) {
                 super(view);

@@ -20,6 +20,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.UUID;
 
 import diplom.oleg.client.android.R;
 import diplom.oleg.client.android.model.User;
@@ -40,9 +41,10 @@ public class ProfileActivity extends DrawerActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState, R.layout.activity_profile2);
-        setContentView(R.layout.activity_profile2);
+        super.onCreate(savedInstanceState, R.layout.activity_profile_drawer);
+        //setContentView(R.layout.activity_profile_drawer);
 
+        setTitle(getResources().getString(R.string.profile));
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -79,22 +81,32 @@ public class ProfileActivity extends DrawerActivity
         });
 
 
-        toolbar.setTitle(getResources().getString(R.string.loading));
         new LoadUserTask().execute();
     }
 
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateUI();
+    }
 
     protected void updateUI() {
+        super.updateUI();
         fname.setText(user.getFirstName());
         lname.setText(user.getLastName());
         desc.setText(user.getDescription());
         email.setText(user.getEmail());
+        //toolbar.setTitle(getResources().getString(R.string.loading));
 
-        if (user.getAvatar() != null){
-            ImageLoader.getInstance().displayImage(user.getAvatar(), avatar);
+
+        if (avatarUri == null){
+            if (user.getAvatar() != null){
+                ImageLoader.getInstance().displayImage(user.getAvatar(), avatar);
+            }else{
+                avatar.setImageResource(R.drawable.avatar_empty);
+            }
         }else{
-            avatar.setImageResource(R.drawable.avatar_empty);
+            ImageLoader.getInstance().displayImage(avatarUri.toString(), avatar);
         }
     }
 
@@ -140,10 +152,10 @@ public class ProfileActivity extends DrawerActivity
         protected Void doInBackground(Void... params) {
             try {
                 if (avatarUri != null){
-                    String avatarImage = saveImageToFirebase();
+                    String avatarImage = saveImageToFirebase(user.getAvatar());
                     user.setAvatar(avatarImage);
                 }
-                restClient.updateUser(userId, user);
+                user = restClient.updateUser(userId, user);
             } catch (IOException e) {
                 Log.e(TAG, "doInBackground: ", e);
                 ex = e;
@@ -162,7 +174,7 @@ public class ProfileActivity extends DrawerActivity
         }
     }
 
-    private String saveImageToFirebase() {
+    private String saveImageToFirebase(String oldImage) {
         try{
             Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), avatarUri);
             float aspectRatio = bitmap.getWidth() / (float) bitmap.getHeight();
@@ -174,8 +186,10 @@ public class ProfileActivity extends DrawerActivity
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
             byte[] data = baos.toByteArray();
 
-            String filename = "avatar_"+userId+".png";
+            String filename = "avatar_"+userId+"_"+ UUID.randomUUID().toString().toLowerCase()+".png";
             firebaseService.uploadFile(data, filename);
+            if (oldImage != null)
+                firebaseService.deleteFile(oldImage);
             avatarUri = null;
             return filename;
         }catch (Exception ex){

@@ -1,43 +1,33 @@
 package diplom.oleg.client.android.activity;
 
-import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
 
 import diplom.oleg.client.android.R;
-import diplom.oleg.client.android.RestClient;
 import diplom.oleg.client.android.model.Task;
 
 
-public class CreateTaskActivity extends Activity {
+public class CreateTaskActivity extends DrawerActivity {
 
-    Toolbar toolbar;
-    RestClient restClient;
     EditText title;
     EditText description;
-    String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_task);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        super.onCreate(savedInstanceState, R.layout.activity_create_task_drawer);
         toolbar.setTitle(R.string.create_task);
-        userId = getSharedPreferences(getPackageName(), MODE_PRIVATE).getString("userId", "");
-        restClient = new RestClient(getSharedPreferences(getPackageName(), MODE_PRIVATE).getString("serverIP", ""));
-
         title = (EditText) findViewById(R.id.title);
         description = (EditText) findViewById(R.id.description);
+
         findViewById(R.id.create).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new CreateTask(
                         title.getText().toString(),
                         description.getText().toString(),
-                        userId
+                        user.getId()
                 ).execute();
             }
         });
@@ -64,7 +54,7 @@ public class CreateTaskActivity extends Activity {
         @Override
         protected Void doInBackground(Void... params) {
             try {
-                restClient.createTask("99", new Task(title, desc, userId));
+                restClient.createTask(new Task(title, desc, userId));
             }catch (Exception ex){
                 exception = ex;
             }
@@ -73,9 +63,11 @@ public class CreateTaskActivity extends Activity {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            if (exception == null)
+            if (exception == null) {
                 toolbar.setTitle("Created");
-            else
+                setResult(RESULT_OK, null);
+                finish();
+            }else
                 toolbar.setTitle("Error");
         }
     }

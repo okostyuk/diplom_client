@@ -101,7 +101,7 @@ public class LoginActivity extends BaseActivity {
             mServerIPView.setText(prefs.getString("serverIP", ""));
             restClient = new RestClient(prefs.getString("serverIP", ""));
         }else{
-            mServerIPView.setText(prefs.getString("192.168.1.101", ""));
+            mServerIPView.setText("192.168.1.101");
             restClient = new RestClient("192.168.1.101");
         }
 
