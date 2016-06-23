@@ -10,10 +10,10 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_keyboard_black_24dp"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme.Dark">
+        android:theme="@style/Tesst1">
         <activity
             android:name=".activity.LoginActivity"
             android:label="@string/app_name">
@@ -30,7 +30,7 @@
             android:name=".activity.TaskListActivity"
             android:label="@string/title_task_list"
             android:parentActivityName=".activity.FirstScreenActivity"
-            android:theme="@style/AppTheme.Dark">
+            >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="diplom.oleg.client.android.activity.FirstScreenActivity" />
@@ -39,7 +39,7 @@
             android:name=".activity.TaskDetailActivity"
             android:label="@string/title_task_detail"
             android:parentActivityName=".activity.TaskListActivity"
-            android:theme="@style/AppTheme.Dark">
+            >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="diplom.oleg.client.android.activity.TaskListActivity" />
@@ -47,7 +47,7 @@
         <activity
             android:name=".activity.ProfileActivity"
             android:label="@string/title_activity_profile"
-            android:theme="@style/AppTheme.Dark" />
+             />
         <activity android:name=".activity.CreateTaskActivity"></activity>
     </application>
 

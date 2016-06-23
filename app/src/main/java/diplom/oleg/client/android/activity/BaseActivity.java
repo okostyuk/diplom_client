@@ -26,7 +26,7 @@ public class BaseActivity extends AppCompatActivity {
         setContentView(layoutRes);
 
         firebaseService = new FirebaseService(this);
-        restClient = new RestClient(getSharedPreferences(getPackageName(), MODE_PRIVATE).getString("serverIP", ""));
+        restClient = new RestClient(getSharedPreferences(getPackageName(), MODE_PRIVATE).getString("serverIP", "127.0.0.1"));
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
                 .imageDownloader(firebaseService)
                 .writeDebugLogs()
