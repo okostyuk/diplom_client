@@ -81,7 +81,8 @@ public class TaskListActivity extends DrawerActivity implements SwipeRefreshLayo
         @Override
         protected void onPostExecute(List<Task> tasks) {
             mSwipeRefreshLayout.setRefreshing(false);
-            recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(tasks));
+            if (tasks != null)
+                recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(tasks));
         }
     }
 

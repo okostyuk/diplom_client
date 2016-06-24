@@ -47,7 +47,11 @@
         <activity
             android:name=".activity.ProfileActivity"
             android:label="@string/title_activity_profile"
-             />
+             >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="diplom.oleg.client.android.activity.FirstScreenActivity" />
+        </activity>
         <activity android:name=".activity.CreateTaskActivity"></activity>
     </application>
 
