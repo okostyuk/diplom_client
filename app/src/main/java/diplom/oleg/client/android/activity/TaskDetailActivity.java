@@ -5,6 +5,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -43,7 +45,7 @@ public class TaskDetailActivity extends DrawerActivity {
     RecyclerView recyclerView;
     Map<String, User> usersMap = new ConcurrentHashMap<>();
     AcceptsAdapter acceptsAdapter;
-
+    SwipeRefreshLayout refreshLayout;
     TextView desc;
 
 
@@ -52,21 +54,23 @@ public class TaskDetailActivity extends DrawerActivity {
         super.onCreate(savedInstanceState, R.layout.activity_task_drawer);
         taskId = getIntent().getStringExtra(TaskDetailFragment.ARG_ITEM_ID);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
         desc = (TextView) findViewById(R.id.desc);
         acceptsAdapter = new AcceptsAdapter();
         recyclerView.setAdapter(acceptsAdapter);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onClick(View view) {
-                new AddAcceptTask().execute();
-                Snackbar.make(view, "Replace with your own detail action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            public void onRefresh() {
+                new LoadDataTask(taskId).execute();
             }
         });
 
-        new LoadUsersTask().execute();
+
+        //new AddAcceptTask().execute();
+
         new LoadDataTask(taskId).execute();
 
     }
@@ -95,8 +99,15 @@ public class TaskDetailActivity extends DrawerActivity {
         @Override
         protected Void doInBackground(Void... params) {
             try {
+                List<User> users = restClient.getUsers();
+                usersMap.clear();
+                for (User user : users){
+                    usersMap.put(user.getId(), user);
+                }
+
                 task = restClient.getTask(taskId);
                 accepts = restClient.getAccepts(taskId);
+
                 acceptsAdapter.setAccepts(accepts);
             } catch (Exception ex) {
                 exception = ex;
@@ -106,8 +117,10 @@ public class TaskDetailActivity extends DrawerActivity {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            setTitle(task.getTitle());
+            refreshLayout.setRefreshing(false);
+            toolbar.setTitle(task.getTitle());
             desc.setText(task.getDesc());
+            acceptsAdapter.notifyDataSetChanged();
         }
     }
 

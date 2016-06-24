@@ -12,6 +12,8 @@ import diplom.oleg.client.android.model.Task;
 import diplom.oleg.client.android.model.TasksResponse;
 import diplom.oleg.client.android.model.User;
 import diplom.oleg.client.android.model.UsersResponse;
+import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -68,6 +70,18 @@ public class RestClient {
     }
 
     public List<Task> getAllTasks() throws IOException {
+        restService.getTasks(basicAuth).enqueue(new Callback<TasksResponse>() {
+            @Override
+            public void onResponse(Call<TasksResponse> call, Response<TasksResponse> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<TasksResponse> call, Throwable t) {
+
+            }
+        });
+
         Response<TasksResponse> response = restService.getTasks(basicAuth).execute();
         if (response.isSuccessful())
             return response.body().getData().getTasks();
